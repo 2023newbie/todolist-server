@@ -1,9 +1,17 @@
-import express from "express";
-import bodyParser from "body-parser";
+import express from 'express';
+import bodyParser from 'body-parser';
 
-const app = express()
-const PORT = 8080
+import { mongoConnect } from './util/database.js';
 
-app.use(bodyParser.urlencoded({ extended: true }))
+import 'dotenv/config';
+import todoRoute from './routes/todo.js';
 
-app.listen(PORT)
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use('/api', todoRoute);
+
+mongoConnect(() => {
+  app.listen(process.env.PORT);
+});
