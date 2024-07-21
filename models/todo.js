@@ -1,23 +1,10 @@
-import { getDb } from '../util/database.js';
+import mongoose from "mongoose";
 
-class Todo {
-  constructor(content) {
-    this.content = content;
+const todoSchema = new mongoose.Schema({
+  content: {
+    type: String,
+    required: true
   }
+})
 
-  static getAll() {
-    const db = getDb();
-    return db.collection('todos').find().toArray()
-  }
-
-  save() {
-    const db = getDb();
-    return db
-      .collection('todos')
-      .insertOne(this)
-      .then(result => console.log(result))
-      .catch(err => console.log(err));
-  }
-}
-
-export default Todo;
+export default mongoose.model('Todo', todoSchema)

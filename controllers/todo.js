@@ -1,25 +1,69 @@
-import Todo from "../models/todo.js"
+import Todo from '../models/todo.js';
 
-const getTodos = (req, res, next) => {
-    Todo.getAll().then(todos => res.json(todos))
-}
+const getTodos = async (req, res, next) => {
+  try {
+    const todos = await Todo.find({});
+    res.send(todos);
+  } catch (error) {
+    res.send({ msg: 'failed' });
+  }
+};
 
-const getTodo = (req, res, next) => {
+const getTodo = async (req, res, next) => {
+  try {
+    const { todoId } = req.params;
+    const todo = await Todo.findById(todoId);
+    if (todo) {
+      res.send(todo);
+    } else {
+      throw 'failed';
+    }
+  } catch (error) {
+    res.send({ msg: 'failed' });
+  }
+};
 
-}
+const createTodo = async (req, res, next) => {
+  try {
+    const { content } = req.body;
+    const todo = new Todo({ content });
+    await todo.save();
+    res.send({ msg: 'success' });
+  } catch (error) {
+    res.send({ msg: 'failed' });
+    console.log(error);
+  }
+};
 
-const createTodo = (req, res, next) => {
-    const { content } = req.body
-    const todo = new Todo(content)
-    todo.save().then(() => res.send({ msg: 'success' }))
-}
+const editTodo = async (req, res, next) => {
+  try {
+    const { todoId } = req.params;
+    const { content } = req.body;
 
-const editTodo = (req, res, next) => {
+    const todo = await Todo.findById(todoId);
+    if (todo) {
+      todo.content = content
+      await todo.save()
+      res.send(todo);
+    } else {
+      throw 'failed';
+    }
 
-}
+  } catch (error) {
+    res.send({ msg: 'failed' });
+    console.log(error);
+  }
+};
 
-const deleteTodo = (req, res, next) => {
+const deleteTodo = async (req, res, next) => {
+  try {
+    const { todoId } = req.params;
+    await Todo.findByIdAndDelete(todoId)
+    res.send({ msg: 'delete success' })
+  } catch (error) {
+    res.send({ msg: 'failed' });
+    console.log(error);
+  }
+};
 
-}
-
-export { getTodos, getTodo, createTodo, editTodo, deleteTodo }
+export { getTodos, getTodo, createTodo, editTodo, deleteTodo };
